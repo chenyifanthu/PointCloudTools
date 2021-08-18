@@ -6,3 +6,5 @@ data/
 *.e57
 *.ply
 *.pcd
+
+temp*
