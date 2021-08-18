@@ -1,0 +1,3 @@
+open3d
+xerces-c
+pye57
