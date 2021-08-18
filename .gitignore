@@ -2,6 +2,7 @@
 __pycache__/
 
 # Point Cloud File
+data/
 *.e57
 *.ply
 *.pcd
