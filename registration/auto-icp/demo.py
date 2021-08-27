@@ -1,34 +1,34 @@
 import open3d as o3d
 import numpy as np
-from ransac import estimate_plane_ransac
-from utils import get_transform_matrix_from_plane_function
+from ransac import estimate_plane_ransac, get_transform_matrix_from_plane_function
+from utils import visualize_ground, register_leica_with_livox, remove_ground
 
 if __name__ == '__main__':
     
-    pcd = o3d.io.read_point_cloud('data/20210808/leica.ply')
-    pcd_down = pcd.voxel_down_sample(0.05)
+    leica = o3d.io.read_point_cloud('data/20210808/leica.ply')
+    plane_coef = estimate_plane_ransac(np.asarray(leica.points))
+    leica_gorund_mat = get_transform_matrix_from_plane_function(plane_coef)
+    leica.transform(leica_gorund_mat)
+    leica_nogd = remove_ground(leica)
     
-    plane_coef = estimate_plane_ransac(np.asarray(pcd.points))
-    trans_mat = get_transform_matrix_from_plane_function(plane_coef)
+    livox = o3d.io.read_point_cloud('data/20210808/SouthEast.pcd')
+    plane_coef = estimate_plane_ransac(np.asarray(livox.points))
+    livox_gorund_mat = get_transform_matrix_from_plane_function(plane_coef)
+    livox.transform(livox_gorund_mat)
+    livox_nogd = remove_ground(livox)
     
-    print(trans_mat)
-    pcd_down.transform(trans_mat)
-    o3d.io.write_point_cloud('data/20210808/leica_gd_down.ply', pcd_down)
-    o3d.visualization.draw_geometries([pcd_down])
+    trans = register_leica_with_livox(leica_nogd, livox_nogd)
+    print(trans)
     
-    # a, b, c, d = 1, 5, 2, 4
-    # x, y = np.mgrid[-2:2:0.01, -2:2:0.01]
-    # x, y = x.flatten(), y.flatten()
-    # z = (-d-a*x-b*y)/ c
-    # points = np.vstack((x, y, z)).T
-    # points_ = np.hstack((points, np.ones((len(z), 1))))
-    # pcd = o3d.geometry.PointCloud()
-    # pcd.points = o3d.utility.Vector3dVector(points)
     
-    # coef = estimate_plane_ransac(points)
-    # trans_mat = get_transform_matrix_from_plane_function(coef)
-    # print(np.asarray(pcd.points))
-    # pcd.transform(trans_mat)
-    # print(np.asarray(pcd.points))
-    # # print(trans_mat.dot(points_.T).T)
+    # pcd_down = pcd.voxel_down_sample(0.05)
+    
+    # plane_coef = estimate_plane_ransac(np.asarray(pcd.points))
+    # trans_mat = get_transform_matrix_from_plane_function(plane_coef)
+    
+    # print(trans_mat)
+    # pcd_down.transform(trans_mat)
+    
+    # pcd_down = o3d.io.read_point_cloud('data/20210808/leica_down.ply')
+    # visualize_ground(pcd_down, threshold=0.3)
     

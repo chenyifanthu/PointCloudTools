@@ -42,6 +42,20 @@ def estimate_plane_ransac(data, step=100, n_ransac=3, threshold=0.04, choose_rat
         best_coef = -best_coef
     return best_coef
 
+def normalize(vec):
+    return vec / np.linalg.norm(vec)
+
+def get_transform_matrix_from_plane_function(coef):
+    assert len(coef) == 4
+    a, b, c, d = coef
+    z_axis = normalize(np.array([a, b, c]))
+    x_axis = normalize(np.array([b, -a, 0]))
+    y_axis = np.cross(z_axis, x_axis)
+    R = np.vstack((x_axis, y_axis, z_axis))
+    t = np.array([[0, 0, d*z_axis[0]/a]])
+    T = np.block([[R, t.T], [np.zeros((1, 3)), 1]])
+    return T
+
 
 if __name__ == '__main__':
     import open3d as o3d
