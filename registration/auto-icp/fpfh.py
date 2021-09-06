@@ -1,5 +1,4 @@
 import open3d as o3d
-from sklearn.neighbors import NearestNeighbors, DistanceMetric, BallTree
 import numpy as np
 import time
 import random
@@ -64,8 +63,10 @@ def solve_pnp_ransac(source, target,
                      ransac_n=3, step=1000, 
                      distance_threshold=0.5):
     assert len(corr_pairs1) == len(corr_pairs2)
-    best_R, best_t, best_inlier = None, None, -1
-    for _ in tqdm(range(step)):
+    dim = source.shape[1]
+    Rs = np.zeros((step, dim, dim))
+    ts = np.zeros((step, dim, 1))
+    for i in tqdm(range(step)):
         choose_id = random.sample(range(len(corr_pairs1)), ransac_n)
         source_ = source[corr_pairs1[choose_id], :].T
         target_ = target[corr_pairs2[choose_id], :].T
@@ -75,6 +76,15 @@ def solve_pnp_ransac(source, target,
         u, _, vt = np.linalg.svd(W)
         R = u.dot(vt)
         t = center2 - R.dot(center1)
+        Rs[i, :, :] = R
+        ts[i, :, :] = t
+    
+    target_hat = Rs.dot(source.T) + ts
+    distances = np.linalg.norm(target.T - target_hat, axis=1)
+    inliers = np.sum(distances < distance_threshold, axis=1)
+    best_idx = np.argmax(inliers)
+    print(inliers[best_idx])
+    
         # target_hat = R.dot(source.T) + t
         # distance = np.linalg.norm(target - target_hat.T, axis=1)
         # inlier_n = sum(distance < distance_threshold)
