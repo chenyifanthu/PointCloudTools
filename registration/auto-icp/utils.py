@@ -4,28 +4,18 @@ import open3d as o3d
 from math import sin, cos, atan, acos
 from global_reg import *
 
-# def get_rotation_matrix(x_rot, y_rot, z_rot):
-#     rx = np.array([[1, 0, 0], 
-#                    [0, cos(x_rot), -sin(x_rot)], 
-#                    [0, sin(x_rot), cos(x_rot)]])
-#     ry = np.array([[cos(y_rot), 0, sin(y_rot)], 
-#                    [0, 1, 0],
-#                    [-sin(y_rot), 0, cos(y_rot)]])
-#     rz = np.array([[cos(z_rot), -sin(z_rot), 0], 
-#                    [sin(z_rot), cos(z_rot), 0],
-#                    [0, 0, 1]])
-#     return rx.dot(ry).dot(rz)
 
 def remove_ground(pcd, threshold=0.04):
+    pcd_nogd = copy.deepcopy(pcd)
     points = np.asarray(pcd.points)
     colors = np.asarray(pcd.colors)
     gpoints_idx = np.abs(points[:, 2]) < threshold
     points = points[~gpoints_idx, :]
-    pcd.points = o3d.utility.Vector3dVector(points)
+    pcd_nogd.points = o3d.utility.Vector3dVector(points)
     if colors.shape[0]:
         colors = colors[~gpoints_idx, :]
-        pcd.colors = o3d.utility.Vector3dVector(colors)
-    return pcd
+        pcd_nogd.colors = o3d.utility.Vector3dVector(colors)
+    return pcd_nogd
 
 def visualize_ground(pcd, threshold=0.04, fade=0.4):
     points = np.asarray(pcd.points)

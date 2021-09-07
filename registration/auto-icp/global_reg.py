@@ -8,7 +8,7 @@ def estimate_normals(pcd, radius):
 def extract_fpfh(pcd, radius):
     pcd_fpfh = o3d.pipelines.registration.compute_fpfh_feature(
         pcd, o3d.geometry.KDTreeSearchParamHybrid(radius=radius, max_nn=100))
-    return pcd_fpfh
+    return pcd_fpfh.data.T
 
 def execute_global_registration(source_down, target_down, source_fpfh, 
                                 target_fpfh, distance_threshold):
