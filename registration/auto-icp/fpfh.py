@@ -108,19 +108,7 @@ def solve_pnp_ransac(source, target,
     print('Best inlier number: %d' % inliers[best_idx])
     # return Rs[best_idx, :, :], ts[best_idx, :, :]
     return Rs[valid_idx[best_idx], :, :], ts[valid_idx[best_idx], :, :]
-    
-def solve_pnp_ransac_2(source, target, corr_pairs1, corr_pairs2, distance_threshold):
-    result = o3d.pipelines.registration.registration_ransac_based_on_correspondence(
-        source, target,
-        o3d.utility.Vector2iVector(np.vstack((corr_pairs1, corr_pairs2)).T), 
-        distance_threshold,
-        o3d.pipelines.registration.TransformationEstimationPointToPoint(False), 
-        3, [
-            o3d.pipelines.registration.CorrespondenceCheckerBasedOnEdgeLength(0.9), 
-            o3d.pipelines.registration.CorrespondenceCheckerBasedOnDistance(distance_threshold)
-        ], o3d.pipelines.registration.RANSACConvergenceCriteria(4000000, 500))
-    
-    return result.transformation
+
     
 
 if __name__ == '__main__':
