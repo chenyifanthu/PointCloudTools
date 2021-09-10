@@ -8,6 +8,9 @@ from fpfh import fpfh, find_correspondence, solve_pnp_ransac, Rt2T
 
 if __name__ == '__main__':
     
+    # leica = o3d.io.read_point_cloud('data/liujiao1/leica6SE.pts')
+    # livox = o3d.io.read_point_cloud('data/liujiao1/6SESE.pcd')
+    
     leica = o3d.io.read_point_cloud('data/20210808/leica.ply')
     livox = o3d.io.read_point_cloud('data/20210808/SouthWest.pcd')
     
@@ -16,14 +19,16 @@ if __name__ == '__main__':
     leica_gorund_mat = get_transform_matrix_from_plane_function(plane_coef)
     leica.transform(leica_gorund_mat)
     leica_nogd = remove_ground(leica)
+    # visualize_ground(leica)
     
     plane_coef = estimate_plane_ransac(np.asarray(livox.points))
     livox_gorund_mat = get_transform_matrix_from_plane_function(plane_coef)
     livox.transform(livox_gorund_mat)
     livox_nogd = remove_ground(livox)
+    # visualize_ground(livox)
     
-    leica_nogd_down = leica_nogd.voxel_down_sample(0.4)
-    livox_nogd_down = livox_nogd.voxel_down_sample(0.4)
+    leica_nogd_down = leica_nogd.voxel_down_sample(0.5)
+    livox_nogd_down = livox_nogd.voxel_down_sample(0.5)
     print(leica_nogd_down, '\n', livox_nogd_down)
     
     leica_fpfh = fpfh(leica_nogd_down)
@@ -33,16 +38,17 @@ if __name__ == '__main__':
     livox_points = np.asarray(livox_nogd_down.points)
     corr_pairs1, corr_pairs2 = find_correspondence(leica_points, livox_points,
                                                    leica_fpfh, livox_fpfh,
-                                                   h_threshold=0.05, 
+                                                   h_threshold=0.1, 
                                                    feat_dist_threshold=10.0)
     
     R, t = solve_pnp_ransac(leica_points[:, :2], livox_points[:, :2], 
                             corr_pairs1, corr_pairs2, 
-                            step=100000, distance_threshold=0.2)
+                            step=200000, distance_threshold=0.2)
     print(R, '\n', t)
     trans = Rt2T(R, t)
     leica_nogd.transform(trans)
-    # o3d.visualization.draw_geometries([leica, livox])
+    
+    o3d.visualization.draw_geometries([leica_nogd, livox_nogd])
     
     # t2 = time.time()
     # leica_down = leica.voxel_down_sample(0.1)
@@ -62,4 +68,5 @@ if __name__ == '__main__':
     # t3 = time.time()
     # print(t2-t1, t3-t2, t3-t1)
     # leica.transform(result.transformation)
-    o3d.visualization.draw_geometries([leica_nogd, livox_nogd])
+    
+    # o3d.visualization.draw_geometries([leica_nogd, livox_nogd])

@@ -16,13 +16,18 @@ def remove_ground(pcd, threshold=0.04):
     return pcd_nogd
 
 def visualize_ground(pcd, threshold=0.04, fade=0.4):
+    pcd_copy = copy.deepcopy(pcd)
     points = np.asarray(pcd.points)
     colors = np.asarray(pcd.colors)
     gpoints_idx = np.abs(points[:, 2]) < threshold
-    colors[gpoints_idx, :] = 1 - fade + fade * colors[gpoints_idx, :]
-    pcd.colors = o3d.utility.Vector3dVector(colors)
+    if colors.shape[0]:
+        colors[gpoints_idx, :] = 1 - fade + fade * colors[gpoints_idx, :]
+        pcd_copy.colors = o3d.utility.Vector3dVector(colors)
+    else:
+        points = points[gpoints_idx, :]
+        pcd_copy.points = o3d.utility.Vector3dVector(points)
 
-    o3d.visualization.draw_geometries([pcd])
+    o3d.visualization.draw_geometries([pcd_copy])
 
 def draw_registration_result(source, target, transformation):
     source_temp = copy.deepcopy(source)

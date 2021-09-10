@@ -46,20 +46,20 @@ def valid_height_in_range(height, minheight, maxheight):
             
        
 def find_correspondence(xyz1, xyz2, feat1, feat2, h_threshold=0.05, feat_dist_threshold=20.0):
-    sort_idx = np.argsort(xyz2[:, 2])
-    xyz2 = xyz2[sort_idx, :]
-    feat2 = feat2[sort_idx, :]
+    sort_idx = np.argsort(xyz1[:, 2])
+    xyz1 = xyz1[sort_idx, :]
+    feat1 = feat1[sort_idx, :]
     corr_pairs1, corr_pairs2 = [], []
-    for i in tqdm(range(xyz1.shape[0])):
-        left, right = valid_height_in_range(xyz2[:, 2], 
-                                            xyz1[i, 2] - h_threshold, 
-                                            xyz1[i, 2] + h_threshold)
+    for i in tqdm(range(xyz2.shape[0])):
+        left, right = valid_height_in_range(xyz1[:, 2], 
+                                            xyz2[i, 2] - h_threshold, 
+                                            xyz2[i, 2] + h_threshold)
         
         if left != -1:
-            distances = np.linalg.norm(feat1[i, :] - feat2[left:right, :], axis=1)
+            distances = np.linalg.norm(feat1[left:right, :] - feat2[i, :], axis=1)
             if np.min(distances) < feat_dist_threshold:
-                corr_pairs1.append(i)
-                corr_pairs2.append(sort_idx[left+np.argmin(distances)])
+                corr_pairs1.append(sort_idx[left+np.argmin(distances)])
+                corr_pairs2.append(i)
             
     return np.array(corr_pairs1), np.array(corr_pairs2)
 
