@@ -1,4 +1,5 @@
 import time
+import random
 import open3d as o3d
 import numpy as np
 from ransac import estimate_plane_ransac, get_transform_matrix_from_plane_function
@@ -6,30 +7,35 @@ from utils import visualize_ground, remove_ground
 from fpfh import fpfh, find_correspondence, solve_pnp_ransac, Rt2T
 
 
+def preprocess(pcd, maxheight):
+    plane_coef = estimate_plane_ransac(np.asarray(pcd.points))
+    gorund_mat = get_transform_matrix_from_plane_function(plane_coef)
+    pcd.transform(gorund_mat)
+    pcd_nogd = remove_ground(pcd, threshold=0.1)
+    if maxheight > 0:
+        ind = np.where(np.asarray(pcd_nogd.points)[:, 2] < maxheight)[0]
+        pcd_nogd = pcd_nogd.select_by_index(ind)
+    return pcd_nogd
+        
+
+
 if __name__ == '__main__':
     
     # leica = o3d.io.read_point_cloud('data/liujiao1/leica6SE.pts')
     # livox = o3d.io.read_point_cloud('data/liujiao1/6SESE.pcd')
     
-    leica = o3d.io.read_point_cloud('data/20210808/leica.ply')
-    livox = o3d.io.read_point_cloud('data/20210808/SouthWest.pcd')
+    leica = o3d.io.read_point_cloud('data/volleyball/leica.pts')
+    livox = o3d.io.read_point_cloud('data/volleyball/livox_4.pcd')
     
-    t1 = time.time()
-    plane_coef = estimate_plane_ransac(np.asarray(leica.points))
-    leica_gorund_mat = get_transform_matrix_from_plane_function(plane_coef)
-    leica.transform(leica_gorund_mat)
-    leica_nogd = remove_ground(leica)
-    # visualize_ground(leica)
+    leica_nogd = preprocess(leica, 4)
+    livox_nogd = preprocess(livox, 4)
     
-    plane_coef = estimate_plane_ransac(np.asarray(livox.points))
-    livox_gorund_mat = get_transform_matrix_from_plane_function(plane_coef)
-    livox.transform(livox_gorund_mat)
-    livox_nogd = remove_ground(livox)
-    # visualize_ground(livox)
-    
-    leica_nogd_down = leica_nogd.voxel_down_sample(0.5)
-    livox_nogd_down = livox_nogd.voxel_down_sample(0.5)
-    print(leica_nogd_down, '\n', livox_nogd_down)
+    leica_nogd_down = leica_nogd.voxel_down_sample(0.2)
+    livox_nogd_down = livox_nogd.voxel_down_sample(0.2)
+    print(leica_nogd_down)
+    print(livox_nogd_down)
+    # o3d.visualization.draw_geometries([leica_nogd_down, livox_nogd_down])
+    # exit()
     
     leica_fpfh = fpfh(leica_nogd_down)
     livox_fpfh = fpfh(livox_nogd_down)
@@ -43,7 +49,7 @@ if __name__ == '__main__':
     
     R, t = solve_pnp_ransac(leica_points[:, :2], livox_points[:, :2], 
                             corr_pairs1, corr_pairs2, 
-                            step=200000, distance_threshold=0.2)
+                            step=400000, distance_threshold=0.2)
     print(R, '\n', t)
     trans = Rt2T(R, t)
     leica_nogd.transform(trans)
