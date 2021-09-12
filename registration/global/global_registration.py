@@ -14,7 +14,7 @@ def draw_registration_result(source, target, transformation):
 def register_leica_with_livox(leica_pcd, livox_pcd,
                               voxel_size_large=0.5,
                               voxel_size_small=0.2,
-                              max_distance=2):
+                              max_distance=5):
 
     print('降采样中...')
     leica_down_large = leica_pcd.voxel_down_sample(voxel_size_large)
@@ -48,7 +48,7 @@ def register_leica_with_livox(leica_pcd, livox_pcd,
                                              max_distance)
     
     print(ransac_res)
-    # draw_registration_result(leica_pcd, livox_pcd, ransac_res.transformation)
+    draw_registration_result(leica_pcd, livox_pcd, ransac_res.transformation)
     
     # print('精配准中......')
     # refine_res = refine_registration(leica_down_small, 
@@ -59,12 +59,12 @@ def register_leica_with_livox(leica_pcd, livox_pcd,
     # print(refine_res)
     
     
-    draw_registration_result(leica_pcd, livox_pcd, ransac_res.transformation)
+    # draw_registration_result(leica_pcd, livox_pcd, ransac_res.transformation)
     
     # return refine_res.transformation
 
 leica_pcd = o3d.io.read_point_cloud('data/volleyball/leica.pts')
-livox_pcd = o3d.io.read_point_cloud('data/volleyball/livox_1.pcd')
+livox_pcd = o3d.io.read_point_cloud('data/volleyball/livox_4.pcd')
 start = time.time()
 register_leica_with_livox(leica_pcd, livox_pcd)
 print('Elapse: %.2f sec' % (time.time()-start))

@@ -25,17 +25,19 @@ def draw_registration_result(source, target, transformation):
 
 if __name__ == '__main__':
     leica = o3d.io.read_point_cloud('data/volleyball/leica.pts')
-    livox = o3d.io.read_point_cloud('data/volleyball/livox_1.pcd')
+    livox = o3d.io.read_point_cloud('data/volleyball/livox_4.pcd')
     
     t1 = time.time()
     
-    maxheight = 4
+    maxheight = 5
     leica_nogd, leica_gmat = preprocess(leica, maxheight=maxheight)
     livox_nogd, livox_gmat = preprocess(livox, maxheight=maxheight)
     
-    voxel_size = 0.4
-    leica_nogd_down = leica_nogd.voxel_down_sample(voxel_size)
-    livox_nogd_down = livox_nogd.voxel_down_sample(voxel_size)
+    voxel_size = 0.5
+    # leica_nogd_down = leica_nogd.voxel_down_sample(voxel_size)
+    # livox_nogd_down = livox_nogd.voxel_down_sample(voxel_size)
+    leica_nogd_down = leica.voxel_down_sample(voxel_size)
+    livox_nogd_down = livox.voxel_down_sample(voxel_size)
     
     estimate_normals(leica_nogd_down, voxel_size*2)
     estimate_normals(livox_nogd_down, voxel_size*2)
@@ -44,11 +46,11 @@ if __name__ == '__main__':
     
     ransac_res = execute_global_registration(leica_nogd_down, livox_nogd_down,
                                              leica_nogd_fpfh, livox_nogd_fpfh,
-                                             distance_threshold=1.5)
+                                             distance_threshold=2)
     print(ransac_res)
     # draw_registration_result(leica_nogd_down, livox_nogd_down, ransac_res.transformation)
     
-    voxel_size = 0.02
+    voxel_size = 0.05
     leica_nogd_down = leica_nogd.voxel_down_sample(voxel_size)
     livox_nogd_down = livox_nogd.voxel_down_sample(voxel_size)
     estimate_normals(leica_nogd_down, voxel_size*2)
@@ -56,7 +58,7 @@ if __name__ == '__main__':
     print('Begin refine registration...')
     refine_result = refine_registration(leica_nogd_down, livox_nogd_down, 
                                         ransac_res.transformation,
-                                        distance_threshold=0.01)
+                                        distance_threshold=0.02)
     print(refine_result)
     
     t2 = time.time()

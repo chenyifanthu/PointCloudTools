@@ -28,5 +28,6 @@ if __name__ == '__main__':
     livox_2.transform(trans_mat2)
     livox_3 = o3d.io.read_point_cloud('data/volleyball/livox_3.pcd')
     livox_3.transform(trans_mat3)
-    # livox_1 = o3d.io.read_point_cloud('data/volleyball/livox_1.pcd')
-    o3d.visualization.draw_geometries([livox_1, livox_3])
+    
+    # leica = o3d.io.read_point_cloud('data/volleyball/leica.pts')
+    o3d.visualization.draw_geometries([livox_1, livox_2, livox_3])

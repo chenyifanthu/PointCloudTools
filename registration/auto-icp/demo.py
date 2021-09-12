@@ -25,7 +25,7 @@ if __name__ == '__main__':
     # livox = o3d.io.read_point_cloud('data/liujiao1/6SESE.pcd')
     
     leica = o3d.io.read_point_cloud('data/volleyball/leica.pts')
-    livox = o3d.io.read_point_cloud('data/volleyball/livox_4.pcd')
+    livox = o3d.io.read_point_cloud('data/volleyball/livox_1.pcd')
     
     leica_nogd = preprocess(leica, 4)
     livox_nogd = preprocess(livox, 4)
