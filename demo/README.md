@@ -5,8 +5,8 @@
 - This is a coarse-to-fine algorithm that register two point clouds without initial alignment.
 - With this registration algorithm, we reconstruct **East playground** of Tsinghua University using four LIDAR (left image) and localize another two LIDAR in this scene (right image).
 <div align="center">
-<img src="doc/playground-1.png" alt="test" height="250" align="middle" />
-<img src="doc/playground-2.png" alt="test" height="250" align="middle" />
+<img src="doc/playground-1.png" alt="test" height="300" align="middle" />
+<img src="doc/playground-2.png" alt="test" height="300" align="middle" />
 </div>
 
 
