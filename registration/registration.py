@@ -54,7 +54,7 @@ def adaptive_icp(source, target, init_trans, threshold_list):
     return best_result, best_fitness
 
 
-def registration_two_pointclouds(source, target, down_sizes=[0.5, 0.2, 0.1]):
+def register_two_pointclouds(source, target, down_sizes=[0.5, 0.2, 0.1]):
     
     ## Estimate ground transform matrix
     print("=== Estimate ground function and remove ground ===")
@@ -132,6 +132,6 @@ def registration_two_pointclouds(source, target, down_sizes=[0.5, 0.2, 0.1]):
 if __name__ == '__main__':
     source = read_point_cloud(r"C:\Users\win10\Desktop\data\20210923\DCNW.ply")
     target = read_point_cloud(r"C:\Users\win10\Desktop\data\20210923\DCE.ply")
-    result = registration_two_pointclouds(source, target)
+    result = register_two_pointclouds(source, target)
     print(result)
     
