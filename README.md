@@ -1,2 +1,2 @@
 # PointCloudTools
-Some useful tools to processing point cloud and image data
+Some useful tools to processing point cloud data
