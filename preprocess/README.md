@@ -1,6 +1,7 @@
 # PointCloudTools.preprocess
 
 ## read_leica_data
+能够利用python快速读取Leica三维激光扫描仪得到的点云数据，并转换成`open3d.geometry.PointCloud`格式。
 
 1、在`python=3.6`环境下安装相关库
 
