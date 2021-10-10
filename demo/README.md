@@ -17,3 +17,4 @@
 <div align="center">
 <img src="doc/move_detect_demo.GIF" alt="test" width="600" align="middle" />
 </div>
+
