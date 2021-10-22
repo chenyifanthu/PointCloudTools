@@ -9,8 +9,4 @@ __pycache__/
 *.pcd
 *.pts
 
-*.jpg
-*.png
-*.JPG
-
 temp*
