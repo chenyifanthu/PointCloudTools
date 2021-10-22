@@ -6,8 +6,8 @@ Some useful tools to processing point cloud data
 - This is a coarse-to-fine algorithm that register two point clouds without initial alignment.
 - With this registration algorithm, we reconstruct **East playground** of Tsinghua University using four LIDAR (left image) and localize another two LIDAR in this scene (right image).
 <div align="center">
-<img src="doc/playground-1.png" alt="test" height="300" align="middle" />
-<img src="doc/playground-2.png" alt="test" height="300" align="middle" />
+<img src="doc/playground-1.png" alt="test" height="250" align="middle" />
+<img src="doc/playground-2.png" alt="test" height="250" align="middle" />
 </div>
 
 
@@ -24,6 +24,6 @@ Some useful tools to processing point cloud data
 - The principle of this algorithm is to project the color points onto an imaging plane perpendicular to the x axis.
 - And can mask out the pixels that are not projected on the image.
 <div align="center">
-<img src="doc/pc2image_demo_pc.png" alt="test" height="300" align="middle" />
-<img src="doc/pc2image_demo_image.jpg" alt="test" height="300" align="middle" />
+<img src="doc/pc2image_demo_pc.png" alt="test" height="250" align="middle" />
+<img src="doc/pc2image_demo_image.jpg" alt="test" height="250" align="middle" />
 </div>
