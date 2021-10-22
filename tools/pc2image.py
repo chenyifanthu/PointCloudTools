@@ -94,18 +94,3 @@ def pointcloud_to_image(pcd_, fx, fy, hfov, vfov, rotx, roty, rotz,
     return image, intrinsics
     
     
-
-if __name__ == '__main__':
-    pcd = o3d.io.read_point_cloud("data/liujiao1/leica6SE.pts")
-    # sphere = o3d.geometry.TriangleMesh.create_sphere(radius=0.1)
-    # sphere.paint_uniform_color([1.0, 0.75, 0.0])
-    # o3d.visualization.draw_geometries([pcd, sphere])
-    
-    image, intrinsics = pointcloud_to_image(pcd, 800, 800, pi/3, pi/4, 0, 0, -pi/3, kernel_size=3)
-    print('Camera Intrinsics: \n', intrinsics)
-    cv2.imwrite("leica_projection.jpg", image)
-    
-    # cv2.imshow('Image', image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    

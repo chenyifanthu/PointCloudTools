@@ -1,3 +1,5 @@
+import sys
+sys.path.append(".")
 from preprocess.read_data import read_point_cloud
 from registration.registration import register_two_pointclouds
 
