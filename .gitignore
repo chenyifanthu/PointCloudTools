@@ -8,5 +8,3 @@ __pycache__/
 *.ply
 *.pcd
 *.pts
-
-temp*
