@@ -9,4 +9,4 @@ __pycache__/
 *.pcd
 *.pts
 
-temp*
+data/*
