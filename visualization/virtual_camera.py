@@ -86,7 +86,7 @@ def custom_draw_geometry_with_camera_trajectory(pcd, trajectory, filename, windo
     custom_draw_geometry_with_camera_trajectory.vis = o3d.visualization.Visualizer()
     custom_draw_geometry_with_camera_trajectory.writer = cv2.VideoWriter(filename, 
                                                                          cv2.VideoWriter_fourcc(*'mp4v'), 
-                                                                         24, window_size)
+                                                                         10, window_size)
     
     def move_forward(vis):
         ctr = vis.get_view_control()
@@ -94,7 +94,7 @@ def custom_draw_geometry_with_camera_trajectory(pcd, trajectory, filename, windo
         glb.index = glb.index + 1
         if glb.index < len(glb.trajectory.parameters):
             ctr.convert_from_pinhole_camera_parameters(glb.trajectory.parameters[glb.index])
-            image = vis.capture_screen_float_buffer(True)
+            image = vis.capture_screen_float_buffer(False)
             image_arr = (255*np.asarray(image)).astype(np.uint8)
             glb.writer.write(image_arr)
         else:
@@ -112,36 +112,17 @@ def custom_draw_geometry_with_camera_trajectory(pcd, trajectory, filename, windo
     vis.register_animation_callback(move_forward)
     vis.run()
 
-def generate_circle_trajectory(pcd, intrinsic, center, radius, interval=100):
+def generate_circle_trajectory(pcd, intrinsic, center, radius, interval=50):
     ext_list = []
-    x, y, z = center
-    # for i in range(interval):
-    #     theta = 2 * i * math.pi / interval
-    #     R = np.array([[math.cos(theta), math.sin(theta), 0],
-    #                 [0, 0, -1],
-    #                 [-math.sin(theta), math.cos(theta), 0]])
-    #     t = np.array([x, y, z+radius])
-    #     T = composeT(R, t)
-    #     ext_list.append(T)
-    # return ext_list
-    theta = 0
-    R = np.array([[math.cos(theta), math.sin(theta), 0],
-                [0, 0, -1],
-                [-math.sin(theta), math.cos(theta), 0]])
-    t = R @ np.array(center)
-    print(t)
-    # t = np.array([x, y, z+radius])
-    T = composeT(R, t)
-    vis = o3d.visualization.Visualizer()
-    vis.create_window(width=1680, height=987, left=0, top=0)
-    vis.add_geometry(pcd)
-    ctr = vis.get_view_control()
-    ctr.convert_from_pinhole_camera_parameters(combine_extrinsic_intrinsic(T, intrinsic))
-    vis.run()
-    vis.destroy_window()
-    
-
-    
+    for i in range(interval):
+        theta = 2 * i * math.pi / interval
+        R = np.array([[math.cos(theta), math.sin(theta), 0],
+                    [0, 0, -1],
+                    [-math.sin(theta), math.cos(theta), 0]])
+        t = - R @ np.array(center) + np.array([0, 0, radius])
+        T = composeT(R, t)
+        ext_list.append(T)
+    return ext_list
     
 def pick_points(pcd):
     vis = o3d.visualization.VisualizerWithEditing()
@@ -161,12 +142,12 @@ if __name__ == '__main__':
     cx, cy = (width-1)/2, (height-1)/2
     intrinsic = o3d.camera.PinholeCameraIntrinsic(width, height, fx, fy, cx, cy)
     
-    pcd = o3d.io.read_point_cloud('./data/leica.ply')
+    pcd = o3d.io.read_point_cloud(r"D:\data\20210918\leica.ply")
     # center = pick_points(pcd)
     center = [-10, -0.47, 0.63]
     ext_list = generate_circle_trajectory(pcd, intrinsic, center, 5)
-    # trajectory = generate_trajectory(ext_list, intrinsic)
-    # custom_draw_geometry_with_camera_trajectory(pcd, trajectory, 'demo-2.mp4', (width, height))
+    trajectory = generate_trajectory(ext_list, intrinsic)
+    custom_draw_geometry_with_camera_trajectory(pcd, trajectory, 'demo-2.mp4', (width, height))
     
     
     # ext_list = save_camera_extrinsic_interactive(pcd, (width, height))
