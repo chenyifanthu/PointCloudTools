@@ -86,7 +86,7 @@ def custom_draw_geometry_with_camera_trajectory(pcd, trajectory, filename, windo
     custom_draw_geometry_with_camera_trajectory.vis = o3d.visualization.Visualizer()
     custom_draw_geometry_with_camera_trajectory.writer = cv2.VideoWriter(filename, 
                                                                          cv2.VideoWriter_fourcc(*'mp4v'), 
-                                                                         10, window_size)
+                                                                         30, window_size)
     
     def move_forward(vis):
         ctr = vis.get_view_control()
@@ -96,6 +96,7 @@ def custom_draw_geometry_with_camera_trajectory(pcd, trajectory, filename, windo
             ctr.convert_from_pinhole_camera_parameters(glb.trajectory.parameters[glb.index])
             image = vis.capture_screen_float_buffer(False)
             image_arr = (255*np.asarray(image)).astype(np.uint8)
+            image_arr = cv2.cvtColor(image_arr, cv2.COLOR_BGR2RGB)
             glb.writer.write(image_arr)
         else:
             vis.destroy_window()
@@ -112,7 +113,7 @@ def custom_draw_geometry_with_camera_trajectory(pcd, trajectory, filename, windo
     vis.register_animation_callback(move_forward)
     vis.run()
 
-def generate_circle_trajectory(pcd, intrinsic, center, radius, interval=50):
+def generate_circle_trajectory(center, radius, interval=50):
     ext_list = []
     for i in range(interval):
         theta = 2 * i * math.pi / interval
@@ -143,17 +144,18 @@ if __name__ == '__main__':
     intrinsic = o3d.camera.PinholeCameraIntrinsic(width, height, fx, fy, cx, cy)
     
     pcd = o3d.io.read_point_cloud(r"D:\data\20210918\leica.ply")
-    # center = pick_points(pcd)
-    center = [-10, -0.47, 0.63]
-    ext_list = generate_circle_trajectory(pcd, intrinsic, center, 5)
+    
+    center = pick_points(pcd)
+    # center = [-10, -0.47, 0.63]
+    ext_list = generate_circle_trajectory(center, radius=5, interval=300)
     trajectory = generate_trajectory(ext_list, intrinsic)
-    custom_draw_geometry_with_camera_trajectory(pcd, trajectory, 'demo-2.mp4', (width, height))
+    custom_draw_geometry_with_camera_trajectory(pcd, trajectory, 'demo-center.mp4', (width, height))
     
     
     # ext_list = save_camera_extrinsic_interactive(pcd, (width, height))
     # np.save('ext_data.npy', np.array(ext_list))
     # # ext_list = list(np.load('ext_data.npy')[:2])
 
-    # ext_list_interp = interpolate_extrinsic_matrix(ext_list, interval=60)
+    # ext_list_interp = interpolate_extrinsic_matrix(ext_list, interval=120)
     # trajectory = generate_trajectory(ext_list_interp, intrinsic)
-    # custom_draw_geometry_with_camera_trajectory(pcd, trajectory, 'demo.mp4', (width, height))
+    # custom_draw_geometry_with_camera_trajectory(pcd, trajectory, 'demo-line.mp4', (width, height))

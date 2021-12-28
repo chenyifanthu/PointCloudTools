@@ -9,4 +9,7 @@ __pycache__/
 *.pcd
 *.pts
 
+*.mp4
+*.avi
+
 data/*
