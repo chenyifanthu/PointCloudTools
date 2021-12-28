@@ -1,6 +1,5 @@
 import cv2
 import math
-import time
 import numpy as np
 import open3d as o3d
 
@@ -136,17 +135,17 @@ def pick_points(pcd):
 
 
 if __name__ == '__main__':
-    height = 987
+    height = 988
     width = 1680
     
     fx = fy = math.sqrt(3) / 2 * height
     cx, cy = (width-1)/2, (height-1)/2
     intrinsic = o3d.camera.PinholeCameraIntrinsic(width, height, fx, fy, cx, cy)
     
-    pcd = o3d.io.read_point_cloud(r"D:\data\20210918\leica.ply")
+    pcd = o3d.io.read_point_cloud(r"/Users/chenyifan/data/point_cloud/20210918/leica.ply")
     
-    center = pick_points(pcd)
-    # center = [-10, -0.47, 0.63]
+    # center = pick_points(pcd)
+    center = [-10, -0.47, 0.63]
     ext_list = generate_circle_trajectory(center, radius=5, interval=300)
     trajectory = generate_trajectory(ext_list, intrinsic)
     custom_draw_geometry_with_camera_trajectory(pcd, trajectory, 'demo-center.mp4', (width, height))
