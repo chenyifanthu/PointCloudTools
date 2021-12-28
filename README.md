@@ -44,7 +44,8 @@ Some useful tools to processing point cloud data
     <div align="center">
     <img src="doc/virtual_line_demo.gif" alt="test" height="300" align="middle" />
     </div>
-    - Another is ti generate a circular trajectory with a point as the center. You can select the center point manually and set the speed of transformation.
+
+    - Another is to generate a circular trajectory with a point as the center. You can select the center point manually and set the speed of transformation.
     <div align="center">
     <img src="doc/virtual_center_demo.gif" alt="test" height="300" align="middle" />
     </div>
